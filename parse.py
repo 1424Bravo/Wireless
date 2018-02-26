@@ -1,7 +1,8 @@
 import json
-
+import pprint
+import requests
 file = 'output.json'
-
+MAC_URL='http://macvendors.co/api/%s'
 json_data = open(file).read()
 data = json.loads(json_data)
 
@@ -16,19 +17,23 @@ for x in data:
 # we now have a dictionary with lists of the times of the packets:
 # first arrival of mac's packet:
 for x in d_mac:
-        print 'First entry of MAC '+x+'. Time: '+time[x][0]
+        print 'First entry of MAC '+x+'. Time: '+d_mac[x][0]
 
 # Last arrival of packet
 for x in d_mac:
-        print 'Last entry of MAC '+x+'. Time: '+time[x][-1]
+        print 'Last entry of MAC '+x+'. Time: '+d_mac[x][-1]
 
 # Time spent:
 for x in d_mac:
-        print 'Time spent from MAC: '+x+'. Time on network: '+str(float(time[x][-1]) - float(time[x][0]))
+        print 'Time spent from MAC: '+x+'. Time on network: '+str(float(d_mac[x][-1]) - float(d_mac[x][0]))
 
 # find out vendor:
-fox x in d_mac:
-        print 'MAC: '+x+'. Vendor:'
+for x in d_mac:
+        r = requests.get(MAC_URL % x)
+        for x in r['result']:
+                print x
+        #print 'MAC: '+x+'. Address:'+r['address']
+        #print 'MAC: '+x+'. mac_prefix:'+r['mac_prefix']
 
 # We can build very fancy graphs here.
 # network speed
