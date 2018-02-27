@@ -1,0 +1,5 @@
+# Ignore files:
+*.pcap
+*.cap
+*.pyc
+output.json
