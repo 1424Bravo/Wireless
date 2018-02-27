@@ -1,39 +1,77 @@
 #!/usr/bin/env python
-import matplotlib.pyplot as plot
+# import matplotlib.pyplot as plot
 import json
 import pprint
 import requests
+import math
+import collections
 
-file = 'output.json'
+in_file = 'output.json'
 MAC_URL='http://macvendors.co/api/%s'
+mac_file = 'vendor.csv'
+first_time_file = 'connects.csv'
+last_time_file = 'disconnects.csv'
+time_file = 'active_time.csv'
+d_mac = dict()  # Dict of all mac adresses and all packet times
+c_mac = dict()  # Dict of the count of all mac vendors
+c_time = dict() # Dict of connect times
+l_time = dict()	# Dict of leave times
+t_max = 0
 
-json_data = open(file).read()
-data = json.loads(json_data)
-d_mac = dict()
-c_mac = dict()
+try:
+	json_data = open(in_file).read()
+	data = json.loads(json_data)
+except:
+	print 'Error reading JSON file'
+	exit()
+# start reading data from JSON file
 for x in data:
         for mac in x['_source']['layers']['eth.addr']:
                 if mac != 'ff:ff:ff:ff:ff:ff':
                         if mac not in d_mac:
                                 d_mac[mac] = list()
                         d_mac[mac].append(x['_source']['layers']['frame.time_relative'][0])
-
-print 'Klaar met lezen!'
+                        if float(t_max) < float(x['_source']['layers']['frame.time_relative'][0]):
+                        	t_max = int(math.floor(float(x['_source']['layers']['frame.time_relative'][0])))
+print 'File ' + str(in_file) + ' has been read!'
 # we now have a dictionary with lists of the times of the packets:
 # first arrival of mac's packet:
-for x in d_mac:
-        print 'First entry of MAC '+x+'. Time: '+d_mac[x][0]
 
-# Last arrival of packet
-for x in d_mac:
-        print 'Last entry of MAC '+x+'. Time: '+d_mac[x][-1]
+# open file where time information has to go and write header line:
+file = open(time_file, 'w')
+file.write('MAC address,First time, Last time, Time on network\n')
 
-# Time spent:
-for x in d_mac:
-        print 'Time spent from MAC: '+x+'. Time on network: '+str(float(d_mac[x][-1]) - float(d_mac[x][0]))
+tmp = 0
+print 't_max is: '+str(t_max)
+while tmp <= int(math.floor(t_max)):
+	c_time[tmp] = 0
+	l_time[tmp] = 0
+	tmp = tmp + 1
 
-# find out vendor:
+# Create vendor dictionary
 for x in d_mac:
+	# write time information to file:
+	file.write(x + ',' + str(d_mac[x][0]) + ',' + str(d_mac[x][-1]) + ',' + str(float(d_mac[x][-1]) - float(d_mac[x][0]))+'\n')
+
+	# append connect and leave time:
+	time_connect = int(math.floor(float(d_mac[x][0])))
+	time_leave = int(math.floor(float(d_mac[x][-1])))
+
+	if time_connect not in c_time:
+		c_time[time_connect] = 1
+	else:
+		c_time[time_connect] = c_time[time_connect] + 1
+
+	if time_leave not in l_time:
+		l_time[time_leave] = 1
+	else:
+		l_time[time_leave] = l_time[time_leave] + 1
+
+
+
+
+
+	# find out vendor:
         r = requests.get(MAC_URL % x)
 
 	if 'company' in r.json()['result']:
@@ -49,23 +87,42 @@ for x in d_mac:
 	else:
 		c_mac[plus] = c_mac[plus] + 1
 
+
+
+# Close file which now has all the time information needed:
+file.close()
+print 'Time information file outputted to: '+ str(time_file)
+
+# We now have:
+# 1. A CSV file with: mac, first entry, last entry, time on network
+# 2. A dictionary with all vendors and the number of associated macs on the network
+# 3. A dictionary with all the first entries per time unit
+# 4. A dictionary with all the last entries per time unit
+# 5. A variable with the latest packet time
+
+
+
+
+# write vendor and number of macs to file
+file = open(mac_file, 'w')
+file.write('Vendor, Number of clients\n')
 for x in c_mac:
-	print x + ',' + str(c_mac[x])
+	file.write('"'+x + '",' + str(c_mac[x])+'\n')
+file.close()
+print 'Vendor information outputted to: '+str(mac_file)
 
-# We can build very fancy graphs here.
-# network speed
-# number of new connections/second/minute
-# pie chart of vendors
+# Write all first packet times to a file
+file = open(first_time_file, 'w')
+file.write('Time, Number of connects\n')
+for x in c_time:
+	file.write(str(x) + ',' + str(c_time[x])+'\n')
+file.close()
+print 'Connects per time unit information outputted to: '+str(first_time_file)
 
-
-# activity per host/vendor
-#labels = list()
-#values = list()
-#for x in c_mac:
-#	labels.append(x)
-#	values.append(c_mac[x])
-
-#fig = plot.figure(figsize=(20,20))
-#ax = fig.add_axes(labels)
-#pie_chart = ax.pi(values)
-#fig.savefig('test.png')
+# Write all last packet times to a file
+file = open(last_time_file, 'w')
+file.write('T, Number of leaves\n')
+for x in l_time:
+	file.write(str(x) + ',' + str(l_time[x])+'\n')
+file.close()
+print 'Disconnects per time unit information outputted to: '+str(last_time_file)
