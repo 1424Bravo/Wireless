@@ -12,10 +12,15 @@ mac_file = 'vendor.csv'
 first_time_file = 'connects.csv'
 last_time_file = 'disconnects.csv'
 time_file = 'active_time.csv'
+numclients_file = 'numclients.csv'
+
+
+# Do not change anything below this point!!!!
 d_mac = dict()  # Dict of all mac adresses and all packet times
 c_mac = dict()  # Dict of the count of all mac vendors
 c_time = dict() # Dict of connect times
 l_time = dict()	# Dict of leave times
+numclients = dict() # Dict with number of clients
 t_max = 0
 
 try:
@@ -46,6 +51,7 @@ print 't_max is: '+str(t_max)
 while tmp <= int(math.floor(t_max)):
 	c_time[tmp] = 0
 	l_time[tmp] = 0
+	numclients[tmp] = 0
 	tmp = tmp + 1
 
 # Create vendor dictionary
@@ -67,9 +73,10 @@ for x in d_mac:
 	else:
 		l_time[time_leave] = l_time[time_leave] + 1
 
-
-
-
+	tmp = time_connect
+	while tmp <= time_leave:
+		numclients[tmp] = int(numclients[tmp] + 1)
+		tmp = tmp + 1
 
 	# find out vendor:
         r = requests.get(MAC_URL % x)
@@ -100,9 +107,6 @@ print 'Time information file outputted to: '+ str(time_file)
 # 4. A dictionary with all the last entries per time unit
 # 5. A variable with the latest packet time
 
-
-
-
 # write vendor and number of macs to file
 file = open(mac_file, 'w')
 file.write('Vendor, Number of clients\n')
@@ -126,3 +130,11 @@ for x in l_time:
 	file.write(str(x) + ',' + str(l_time[x])+'\n')
 file.close()
 print 'Disconnects per time unit information outputted to: '+str(last_time_file)
+
+# Print the number of clients to a file
+file = open(numclients_file, 'w')
+file.write('T, Number of leaves\n')
+for x in numclients:
+	file.write(str(x) + ',' + str(numclients[x])+'\n')
+file.close()
+print 'Number of active clients per time section outputted to: '+str(numclients_file)
