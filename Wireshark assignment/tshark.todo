@@ -1,0 +1,11 @@
+sudo tshark -e eth.addr -e frame.time -e frame.time_epoch -e frame.time_delta -e frame.time_relative -Tjson
+
+
+daarna 
+
+	1. json parsen per entry
+	2. als eth.addr != ff:ff:ff:ff:ff
+		1. als het mac addres niet in de db staat:
+			1. Voeg hem toe (mac, vendor, type, relative time, (datum?)
+	3. grafiekjes beunen
+		
