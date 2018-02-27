@@ -5,7 +5,7 @@ import pprint
 import requests
 import math
 import collections
-
+import os
 in_file = 'output.json'
 MAC_URL='http://macvendors.co/api/%s'
 mac_file = 'vendor.csv'
@@ -138,3 +138,7 @@ for x in numclients:
 	file.write(str(x) + ',' + str(numclients[x])+'\n')
 file.close()
 print 'Number of active clients per time section outputted to: '+str(numclients_file)
+
+
+# Run matlab script to generate figs
+os.system('matlab -nodisplay -nodesktop -r "run ./make_figs.m; exit"')
