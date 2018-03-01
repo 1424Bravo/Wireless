@@ -29,15 +29,15 @@ print('connects_disconnects_time','-dpng')
 clear all;
 close all;
 figure
+set(gcf,'units','points','position',[0,0,900,600])
+
 formatSpec = '%C%f';
 T = readtable('vendor.csv','Delimiter',',','Format',formatSpec);
 labels = table2array(T(:,1));
 vals = table2array(T(:,2));
-pie(vals)
-legend(cellstr(labels),'Position',[0.35 0.3 1.0 1.0])
+name = cellstr(labels);
+
+bar(vals)
+set(gca,'xticklabel',name)
 title('Percentage of MAC addresses from vendor')
 print('vendor','-dpng')
-
-
-
-
