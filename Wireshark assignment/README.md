@@ -2,7 +2,7 @@
 
 Capturing is as follows:
 	
-  sudo tshark -e eth.addr -e frame.time_relative -Tjson > output.json
+  	sudo tshark -e eth.addr -e frame.time_relative -Tjson > output.json
 
 Then run the script parse.py:
 
