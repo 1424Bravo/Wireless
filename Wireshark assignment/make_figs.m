@@ -6,8 +6,8 @@ T3 = readtable('numclients.csv');
 A1 = table2array(T1);
 A2 = table2array(T2);
 A3 = table2array(T3);
-fontsize_title = 18;
-fontsize_axis = 14;
+fontsize_title = 25;
+fontsize_axis = 20;
 figure
 set(gcf,'units','points','position',[0,0,900,600])
 hold on
@@ -20,7 +20,7 @@ plot(A3(:,1),A3(:,2))
 hold off
 xlabel('time (s)','fontsize',fontsize_axis)
 ylabel('# of connected clients','fontsize',fontsize_axis)
-title('The number of (dis)connects of the network per second and total number of clients','fontsize',fontsize_title )
+title({'The number of (dis)connects per second';'and total number of clients'},'fontsize',fontsize_title )
 xlim([min(min(A1(:,1)),min(A2(:,1))) max(max(A1(:,1)),max(A2(:,1)))])
 legend([T1.Properties.VariableNames(2),T2.Properties.VariableNames(2), 'Number of connected clients'])
 
@@ -40,16 +40,18 @@ n_time = table2array(T(:,3));
 name = cellstr(labels);
 
 bar(vals)
-set(gca,'xticklabel',name)
+set(gca,'xticklabel',name,'fontsize',fontsize_axis)
 ylabel('# of distinctive addresses','fontsize',fontsize_axis)
 title('Number of MAC addresses from vendor','fontsize',fontsize_title )
 print('vendor','-dpng')
 
 figure
 set(gcf,'units','points','position',[0,0,900,600])
-bar(n_time)
+dist = 5 ;    % give the distance you want >0
+x = 1:dist:(1+(length(n_time)-1)*dist) ;
+bar(x,n_time)
 title('Average time on network per vendor','fontsize',fontsize_title)
 ylabel('time(s)','fontsize',fontsize_axis)
-set(gca,'xticklabel',name)
+%set(gca,'xticklabel',name,'fontsize',fontsize_axis)
 print('timeonnetwork','-dpng')
 
