@@ -21,23 +21,34 @@ xlabel('time (s)')
 ylabel('# of connected clients')
 title('The number of (dis)connects of the network per second and total number of clients')
 xlim([min(min(A1(:,1)),min(A2(:,1))) max(max(A1(:,1)),max(A2(:,1)))])
-legend(['Number of connected clients', T1.Properties.VariableNames(2),T2.Properties.VariableNames(2) ])
+legend([T1.Properties.VariableNames(2),T2.Properties.VariableNames(2), 'Number of connected clients'])
 
 print('connects_disconnects_time','-dpng')
 
 %%%%% Now do the vendor part:
-clear all;
-close all;
+%clear all;
+%close all;
 figure
 set(gcf,'units','points','position',[0,0,900,600])
 
-formatSpec = '%C%f';
+formatSpec = '%C%f%f';
 T = readtable('vendor.csv','Delimiter',',','Format',formatSpec);
 labels = table2array(T(:,1));
 vals = table2array(T(:,2));
+n_time = table2array(T(:,3));
 name = cellstr(labels);
 
 bar(vals)
 set(gca,'xticklabel',name)
-title('Percentage of MAC addresses from vendor')
+ylabel('# of distinctive addresses')
+title('Number of MAC addresses from vendor')
 print('vendor','-dpng')
+
+figure
+set(gcf,'units','points','position',[0,0,900,600])
+bar(n_time)
+title('Average time on network per vendor')
+ylabel('time(s)')
+set(gca,'xticklabel',name)
+print('timeonnetwork','-dpng')
+

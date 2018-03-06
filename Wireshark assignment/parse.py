@@ -20,6 +20,7 @@ d_mac = dict()  # Dict of all mac adresses and all packet times
 c_mac = dict()  # Dict of the count of all mac vendors
 c_time = dict() # Dict of connect times
 l_time = dict()	# Dict of leave times
+a_time = dict() # Dict of time active on network
 numclients = dict() # Dict with number of clients
 t_max = 0
 
@@ -47,7 +48,6 @@ file = open(time_file, 'w')
 file.write('MAC address,First time, Last time, Time on network\n')
 
 tmp = 0
-print 't_max is: '+str(t_max)
 while tmp <= int(math.floor(t_max)):
 	c_time[tmp] = 0
 	l_time[tmp] = 0
@@ -89,6 +89,11 @@ for x in d_mac:
 		if 'error' in r.json()['result']:
 			plus = str(r.json()['result']['error'])
 
+	if plus not in a_time:
+		a_time[plus] = list()
+	# add time to an array
+	a_time[plus].append(float(d_mac[x][-1]) - float(d_mac[x][0]))
+
 	if plus not in c_mac:
 		c_mac[plus] = 1
 	else:
@@ -109,9 +114,14 @@ print 'Time information file outputted to: '+ str(time_file)
 
 # write vendor and number of macs to file
 file = open(mac_file, 'w')
-file.write('Vendor, Number of clients\n')
+file.write('Vendor, Number of clients,Average time on network\n')
 for x in c_mac:
-	file.write('"'+x + '",' + str(c_mac[x])+'\n')
+	if x in a_time:
+		str_time = str(float(sum(a_time[x])) / float(len(a_time[x])))
+		print 'str_time='+str_time
+	else:
+		str_time = '0'
+	file.write('"'+str(x) + '",' + str(c_mac[x])+','+str(str_time)+'\n')
 file.close()
 print 'Vendor information outputted to: '+str(mac_file)
 
