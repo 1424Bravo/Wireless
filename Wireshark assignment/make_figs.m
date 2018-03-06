@@ -8,6 +8,7 @@ A2 = table2array(T2);
 A3 = table2array(T3);
 fontsize_title = 25;
 fontsize_axis = 20;
+fontsize_axisbar = 14;
 figure
 set(gcf,'units','points','position',[0,0,900,600])
 hold on
@@ -29,9 +30,6 @@ print('connects_disconnects_time','-dpng')
 %%%%% Now do the vendor part:
 %clear all;
 %close all;
-figure
-set(gcf,'units','points','position',[0,0,1920,1080])
-
 formatSpec = '%C%f%f';
 T = readtable('vendor.csv','Delimiter',',','Format',formatSpec);
 labels = table2array(T(:,1));
@@ -39,17 +37,20 @@ vals = table2array(T(:,2));
 n_time = table2array(T(:,3));
 name = cellstr(labels);
 
+
+figure
+set(gcf,'units','points','position',[0,0,900,600])
 bar(vals)
-set(gca,'xticklabel',name,'fontsize',fontsize_axis)
+set(gca,'xticklabel',name,'fontsize',fontsize_axisbar)
 ylabel('# of distinctive addresses','fontsize',fontsize_axis)
 title('Number of MAC addresses from vendor','fontsize',fontsize_title )
 print('vendor','-dpng')
 
 figure
-set(gcf,'units','points','position',[0,0,1920,1080])
+set(gcf,'units','points','position',[0,0,900,600])
 bar(n_time)
-title('Average time on network per vendor','fontsize',fontsize_title)
+set(gca,'xticklabel',name,'fontsize',fontsize_axisbar)
 ylabel('time(s)','fontsize',fontsize_axis)
-set(gca,'xticklabel',name,'fontsize',fontsize_axis)
+title('Average time on network per vendor','fontsize',fontsize_title)
 print('timeonnetwork','-dpng')
 
