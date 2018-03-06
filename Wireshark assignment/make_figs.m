@@ -30,7 +30,7 @@ print('connects_disconnects_time','-dpng')
 %clear all;
 %close all;
 figure
-set(gcf,'units','points','position',[0,0,900,600])
+set(gcf,'units','points','position',[0,0,1920,1080])
 
 formatSpec = '%C%f%f';
 T = readtable('vendor.csv','Delimiter',',','Format',formatSpec);
@@ -46,12 +46,10 @@ title('Number of MAC addresses from vendor','fontsize',fontsize_title )
 print('vendor','-dpng')
 
 figure
-set(gcf,'units','points','position',[0,0,900,600])
-dist = 5 ;    % give the distance you want >0
-x = 1:dist:(1+(length(n_time)-1)*dist) ;
-bar(x,n_time)
+set(gcf,'units','points','position',[0,0,1920,1080])
+bar(n_time)
 title('Average time on network per vendor','fontsize',fontsize_title)
 ylabel('time(s)','fontsize',fontsize_axis)
-%set(gca,'xticklabel',name,'fontsize',fontsize_axis)
+set(gca,'xticklabel',name,'fontsize',fontsize_axis)
 print('timeonnetwork','-dpng')
 
