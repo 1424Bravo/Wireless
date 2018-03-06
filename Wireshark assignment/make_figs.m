@@ -30,11 +30,12 @@ print('connects_disconnects_time','-dpng')
 %%%%% Now do the vendor part:
 %clear all;
 %close all;
-formatSpec = '%C%f%f';
+formatSpec = '%C%f%f%f';
 T = readtable('vendor.csv','Delimiter',',','Format',formatSpec);
 labels = table2array(T(:,1));
 vals = table2array(T(:,2));
 n_time = table2array(T(:,3));
+c_packet = table2array(T(:,3));
 name = cellstr(labels);
 
 

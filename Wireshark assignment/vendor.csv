@@ -1,6 +1,6 @@
-Vendor, Number of clients,Average time on network
-"Enterasys",1,415.688333
-"VMware, Inc.",6,261.053146167
-"F5 Networks, Inc.",4,412.9631085
-"Hewlett Packard",44,247.1008325
-"no result",8,375.591435625
+Vendor, Number of clients,Average time on network, Number of transmitted packets
+"Enterasys",1,415.688333,166
+"VMware, Inc.",6,261.053146167,394
+"F5 Networks, Inc.",4,412.9631085,560
+"Hewlett Packard",44,247.1008325,30329
+"no result",8,375.591435625,166227

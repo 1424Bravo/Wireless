@@ -19,6 +19,7 @@ numclients_file = 'numclients.csv'
 d_mac = dict()  # Dict of all mac adresses and all packet times
 c_mac = dict()  # Dict of the count of all mac vendors
 c_time = dict() # Dict of connect times
+c_packet = dict() # Dict of total number of packets per mac
 l_time = dict()	# Dict of leave times
 a_time = dict() # Dict of time active on network
 numclients = dict() # Dict with number of clients
@@ -57,7 +58,12 @@ while tmp <= int(math.floor(t_max)):
 # Create vendor dictionary
 for x in d_mac:
 	# write time information to file:
-	file.write(x + ',' + str(d_mac[x][0]) + ',' + str(d_mac[x][-1]) + ',' + str(float(d_mac[x][-1]) - float(d_mac[x][0]))+'\n')
+	som = 0
+	for y in d_mac[x]:
+		som = som + int(1)
+	som = int(math.floor(float(float(som)/2)))
+
+	file.write(x + ',' + str(d_mac[x][0]) + ',' + str(d_mac[x][-1]) + ',' + str(float(d_mac[x][-1]) - float(d_mac[x][0])) + '\n')
 
 	# append connect and leave time:
 	time_connect = int(math.floor(float(d_mac[x][0])))
@@ -99,7 +105,10 @@ for x in d_mac:
 	else:
 		c_mac[plus] = c_mac[plus] + 1
 
-
+	# write number of sent packets:
+	if plus not in c_packet:
+		c_packet[plus] = list()
+	c_packet[plus].append(int(som))
 
 # Close file which now has all the time information needed:
 file.close()
@@ -114,14 +123,18 @@ print 'Time information file outputted to: '+ str(time_file)
 
 # write vendor and number of macs to file
 file = open(mac_file, 'w')
-file.write('Vendor, Number of clients,Average time on network\n')
+file.write('Vendor, Number of clients,Average time on network, Number of transmitted packets\n')
 for x in c_mac:
 	if x in a_time:
 		str_time = str(float(sum(a_time[x])) / float(len(a_time[x])))
-		print 'str_time='+str_time
 	else:
 		str_time = '0'
-	file.write('"'+str(x) + '",' + str(c_mac[x])+','+str(str_time)+'\n')
+	if x in c_packet:
+		str_packet = str(int(sum(c_packet[x])) / int(len(a_time[x])))
+	else:
+		str_packet = '0'
+
+	file.write('"'+str(x) + '",' + str(c_mac[x])+','+str(str_time) + ',' + str_packet + '\n')
 file.close()
 print 'Vendor information outputted to: '+str(mac_file)
 
