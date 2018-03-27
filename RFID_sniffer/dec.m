@@ -1,5 +1,6 @@
 function [bit,check] = dec(frame)
     part = frame;
+    k_old=-1;
     data = diff(part);
     thresp=0.5;
     thresm=-0.5;
@@ -31,9 +32,10 @@ function [bit,check] = dec(frame)
      if m>0
          start=falris(k);
      end
-     if (start+period)>numel(part)
+     if (start+period)>numel(part) || k==k_old
         break
      end
+     k_old=k;
  end
  
 
