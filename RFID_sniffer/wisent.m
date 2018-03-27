@@ -17,4 +17,7 @@ for i=3:length(frame(1,:))
    [bit,check]=dec(frame(:,i));
    data(i,1:length(bit))=bit;
    checks(i)=check;
+   if check == 0
+        disp(['Invalid frame!']);
+   end
 end
