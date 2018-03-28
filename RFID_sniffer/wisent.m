@@ -11,11 +11,12 @@ cd(path);
 addpath(genpath(path));
 thres = 0.045;%0.95*max(orig_sig);
 [signal, norm] = getis(raw_data, thres); % get raw and normalized signal
-[frame] = frames(norm); %NB First two frame has a high chance of being corupt due to initialization
+fleng = 120000;
+[frame] = frames(norm,fleng); %NB First two frame has a high chance of being corupt due to initialization
 frame = frame(: , 3:end);
-data = zeros(length(frame(1,:)),114);
+data = zeros(length(frame(1,:)),112);
 for i=1:length(frame(1,:)-1)
-   [bit,check,bitdata,hilo]=dec(frame(:,i));
+   [bit,check,bitdata]=dec(frame(:,i));
    bd(i,:)=bitdata';
    data(i,1:length(bit))=bit;
    checks(i)=check;

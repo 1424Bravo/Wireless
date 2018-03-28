@@ -1,7 +1,5 @@
-function [frame] = frames(norm)
-frame_length = 120000;
-n = 1;
-i=1;
+function [frame] = frames(norm,frame_length)
+n = 1;i=1;
 while i<numel(norm)
     if i-10000>10000 && (i+frame_length)<numel(norm)
     if norm(i) == 0

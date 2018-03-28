@@ -1,4 +1,4 @@
-function [bit,check, bitdata,hilo] = dec(frame)
+function [bit,check, bitdata] = dec(frame)
     part = frame; k_old=-1;
     data = diff(part);
     thresp=0.5; thresm=-0.5;
