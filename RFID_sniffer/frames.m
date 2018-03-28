@@ -1,6 +1,4 @@
 function [frame] = frames(norm)
-dbstop if error
-
 frame_length = 120000;
 n = 1;
 i=1;
