@@ -33,7 +33,7 @@ function [bit,check, bitdata] = dec(frame)
      end
      k_old=k;
  end
- pre = rot90(de2bi(hex2dec('BBBB')))';
+ pre = rot90(de2bi(hex2dec('BBBBBB')))';
  check = isequal(pre,bit(1:length(pre)));
 
      hilo=sort(hilo);
@@ -44,5 +44,7 @@ function [bit,check, bitdata] = dec(frame)
      bitdata(4) = max(abs(hilo)); % max bit length 1
      bitdata(5) = mean([2*hilo(1:d) hilo(d+1:end)]);% Average bit length     
      bitdata(6) = rising(end)-falling(1);% Average bit length
+     bitdata(7) = falling(1); % Start of frame sample
+     bitdata(8) = rising(end); % end of frame
 end
 
