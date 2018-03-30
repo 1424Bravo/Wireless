@@ -12,4 +12,3 @@ while i<numel(norm)
     i=i+1;
 end
 end
-
