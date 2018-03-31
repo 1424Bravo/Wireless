@@ -1,9 +1,10 @@
 function [bit,check, bitdata] = dec(frame)
-    part = frame; k_old=-1;
-    data = diff(part);
+    k_old=-1;
+    data = diff(frame);
     thresp=0.5; thresm=-0.5;
     rising = find(data>thresp)+1; %find edges
     falling = find(data<thresm);
+    falris = [falling;rising];
     for i=1:(length(rising)-1)
         high(i) = falling(i+1) - rising(i);
     end
@@ -15,10 +16,10 @@ function [bit,check, bitdata] = dec(frame)
     period = 2*min(abs(hilo));
     nump = numel(falling)+numel(rising)-1;
     start = falling(1);
-    falris = [falling;rising];
+
     
  for i=1:nump
-     if mean(part(start:start+period))<0.25 || mean(part(start:start+period)) > 0.75
+     if mean(frame(start:start+period))<0.25 || mean(frame(start:start+period)) > 0.75
          bit(i)=1;
      else
          bit(i) = 0;
@@ -28,7 +29,7 @@ function [bit,check, bitdata] = dec(frame)
      if m>0
          start=falris(k);
      end
-     if (start+period)>numel(part) || k==k_old || (m+start)>max(falris)
+     if (start+period)>numel(frame) || k==k_old || (m+start)>max(falris)
         break
      end
      k_old=k;
@@ -44,6 +45,4 @@ function [bit,check, bitdata] = dec(frame)
      bitdata(4) = max(abs(hilo)); % max bit length 1
      bitdata(5) = mean([2*hilo(1:d) hilo(d+1:end)]);% Average bit length     
      bitdata(6) = rising(end)-falling(1);% Average bit length
-%      bitdata(7) = falling(1); % Start of frame sample
-%      bitdata(8) = rising(end); % end of frame
 end
