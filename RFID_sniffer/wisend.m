@@ -5,7 +5,7 @@ close all;
 clc;
 dbstop if error
 format compact
-raw_data = 'data/raw_data/data_new.dat';
+raw_data = 'data_new.dat';
 addpath(genpath(cd));
 % Set variables
 fs = 8e6; % Sample rate
@@ -14,10 +14,20 @@ fleng = 0.015*fs;
 [frame,start] = frames(norm,fleng); 
 frame = frame(: , 3:end);
 data = zeros(length(frame(1,:)),112);
+
 for i=1:length(frame(1,:)-1)
    [bit,check,bitdata]=dec(frame(:,i));
    bd(i,:)=bitdata';
    data(i,1:length(bit))=bit;
+   %%% check CRC code %%%
+   if check == 1
+        % we need 'bit'
+        data = bit(1:97);
+        crc =bit(97:112)
+        crcdec = bin2dec(char(crc+'0'));
+        crc_check = crc_check(data(26:end))
+
+   end
    checks(i)=check;
    if check == 1
         delim(i,:) = bit(25:32);
@@ -27,17 +37,20 @@ for i=1:length(frame(1,:)-1)
         msgid(i,:) =bit(57:64);
         payload(i,:) =bit(65:96);
         crc(i,:) =bit(97:112);
+        
    end
    if check == 0 || length(bit)~=112
         numel = find(data(3,:)~=data(i,:));
         if numel(1)>0
-            disp(['Invalid frame: ' num2str(i) ' extra zero at ' num2str(numel(1))]);
+            disp(['Invalid frame: ' num2s
+                 r(i) ' extra zero at ' num2str(numel(1))]);
         else
             disp(['Invalid frame: ' num2str(i)]);
         end
    end
 end
 %% minimal bit length
+dnorm=diff(norm);
 figure; subplot(3,2,1);histogram(bd(1:end,1));title('min length 0 bit')
 subplot(3,2,2);histogram(bd(1:end,2));title('max length 0 bit');
 subplot(3,2,3);histogram(bd(1:end,3));title('min length 1 bit')

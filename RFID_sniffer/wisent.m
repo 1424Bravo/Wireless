@@ -5,11 +5,11 @@ close all;
 clc;
 dbstop if error
 format compact
-path = 'C:\Users\Kevin\Documents\TU\Wireless_networking\RFID_sniffer-master\';
-raw_data = 'data/raw_data/data_new.dat';
-cd(path);
-addpath(genpath(path));
-thres = 0.045;%0.95*max(orig_sig);
+%path = 'C:\Users\Kevin\Documents\TU\Wireless_networking\RFID_sniffer-master\';
+raw_data = 'data_new.dat';
+%cd(path);
+%addpath(genpath(path));
+thres = 0.95*max(orig_sig);
 [signal, norm] = getis(raw_data, thres); % get raw and normalized signal
 fleng = 120000;
 [frame,start] = frames(norm,fleng); %NB First two frame has a high chance of being corupt due to initialization
