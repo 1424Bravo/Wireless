@@ -5,9 +5,10 @@ close all;
 clc;
 dbstop if error
 format compact
-raw_data = 'data/raw_data/data_new.dat';
-addpath(genpath(cd));
+raw_data = 'data_new.dat';
+%addpath(genpath(cd));
 % Set variables
+crc_failed = 0; % variable of number of packets with valid preamble, but invalid CRC check
 fs = 8e6; % Sample rate
 fleng = 0.015*fs; 
 [signal, norm, x] = getis(raw_data, fs);
@@ -19,7 +20,21 @@ for i=1:length(frame(1,:)-1)
    [bit,check,bitdata]=dec(frame(:,i));
    bd(i,:)=bitdata';
    data(i,1:length(bit))=bit;
+   if check == 1
+        % we need 'bit'
+        data = bit(1:97);
+        crc =bit(97:112);
+        %crcdec = bin2dec(char(crc+'0')); % not needed now
+        crccheck = crc_check(data(26:end));
+        if crccheck ~= crc
+            check = 0;
+            display('CRC checksum verification failed!')
+            crc_failed = crc_failed + 1;
+        end
+   
+   end
    checks(i)=check;
+
    if check == 1
         delim(i,:) = bit(25:32);
         src(i,:) = bit(33:40);
